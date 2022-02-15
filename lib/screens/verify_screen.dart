@@ -17,7 +17,7 @@ class VerifyScreen extends StatefulWidget {
 
 class _VerifyScreenState extends State<VerifyScreen> {
   final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
-  String? _verificationCode;
+  late String _verificationCode;
   final TextEditingController _pinPutController = TextEditingController();
   final FocusNode _pinPutFocusNode = FocusNode();
   final BoxDecoration pinPutDecoration = BoxDecoration(
@@ -89,7 +89,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                 //  try {
                 //   await FirebaseAuth.instance
                 //       .signInWithCredential(PhoneAuthProvider.credential(
-                //           verificationId: _verificationCode!, smsCode: pin))
+                //           verificationId: _verificationCode, smsCode: pin))
                 //       .then((value) async {
                 //     if (value.user != null) {
                 //       print('logged in ');
@@ -104,34 +104,52 @@ class _VerifyScreenState extends State<VerifyScreen> {
                 //   _scaffoldkey.currentState!
                 //       .showSnackBar(const SnackBar(content: Text('invalid OTP')));
                 // }
+                try {
+                  await FirebaseAuth.instance
+                      .signInWithCredential(PhoneAuthProvider.credential(
+                          verificationId: _verificationCode, smsCode: pin))
+                      .then((value) async {
+                    if (value.user != null) {
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (context) => RegisterScreen()),
+                          (route) => false);
+                    }
+                  });
+                } catch (e) {
+                  FocusScope.of(context).unfocus();
+                  _scaffoldkey.currentState!
+                      .showSnackBar( const SnackBar(content: Text('invalid OTP')));
+                }
              
               }
             )
               ),
 
              SizedBox(height: 50.h,),
-              CustomButton(onPress: () async{
-                        try {
-                  await FirebaseAuth.instance
-                      .signInWithCredential(PhoneAuthProvider.credential(
-                          verificationId: _verificationCode!, smsCode: _pinPutController.text))
-                      .then((value) async {
-                    if (value.user != null) {
-                      print('logged in ');
-                      // Navigator.pushAndRemoveUntil(
-                      //     context,
-                      //     MaterialPageRoute(builder: (context) => Home()),
-                      //     (route) => false);
-                    }
-                  });
-                } catch (e) {
-                  FocusScope.of(context).unfocus();
-                  _scaffoldkey.currentState!
-                      .showSnackBar(SnackBar(content: Text('invalid OTP')));
-                }
+              // CustomButton(onPress: () async{
+              //           try {
+              //     await FirebaseAuth.instance
+              //         .signInWithCredential(PhoneAuthProvider.credential(
+              //             verificationId: _verificationCode!, smsCode: _pinPutController.text))
+              //         .then((value) async {
+              //       if (value.user != null) {
+              //        // print('logged in ');
+              //         // Problem is hereeeeee
+              //         // Navigator.pushAndRemoveUntil(
+              //         //     context,
+              //         //     MaterialPageRoute(builder: (context) => RegisterScreen()),
+              //         //     (route) => false);
+              //       }
+              //     });
+              //   } catch (e) {
+              //     FocusScope.of(context).unfocus();
+              //     _scaffoldkey.currentState!
+              //         .showSnackBar(SnackBar(content: Text('invalid OTP')));
+              //   }
              
 
-              }, text: ' التالي ',textcolor: Colors.white, color: Color(0xff1379A2))
+              // }, text: ' التالي ',textcolor: Colors.white, color: Color(0xff1379A2))
           ],
         ),
       ),
@@ -145,14 +163,14 @@ class _VerifyScreenState extends State<VerifyScreen> {
           await FirebaseAuth.instance
               .signInWithCredential(credential)
               .then((value) async {
-            if (value.user != null) {
+           if (value.user != null) {
               print('user logged in');
-              // Navigate to register 
-              // Navigator.pushAndRemoveUntil(
-              //     context,
-              //     MaterialPageRoute(builder: (context) => RegisterScreen()),
-              //     (route) => false);
-            }
+              //Navigate to register 
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => RegisterScreen()),
+                  (route) => false);
+          } 
           });
         },
         verificationFailed: (FirebaseAuthException e) {

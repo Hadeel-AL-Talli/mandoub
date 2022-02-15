@@ -1,12 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mandoub/main.dart';
+import 'package:mandoub/screens/home_screen.dart';
 import 'package:mandoub/screens/verify_screen.dart';
 import 'package:mandoub/widgets/custom_button.dart';
 import 'package:mandoub/widgets/custom_text_feild.dart';
- enum MobileVerificationState {
-  SHOW_MOBILE_FORM_STATE,
-  SHOW_OTP_FORM_STATE,
-}
+//  enum MobileVerificationState {
+//   SHOW_MOBILE_FORM_STATE,
+//   SHOW_OTP_FORM_STATE,
+// }
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({ Key? key }) : super(key: key);
@@ -17,7 +20,13 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final phoneController = TextEditingController();
-
+   String? uid ;
+  @override
+  void initState() { 
+    super.initState();
+    uid = FirebaseAuth.instance.currentUser!.uid;
+    
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,6 +83,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: AppTextField(hint: ' XX XXX XXXX', controller: phoneController  ,prefix: Text('+972'), keyboardType: TextInputType.text,)), 
               SizedBox(height: 50.h,), 
                CustomButton(onPress: (){
+            //        if(uid !=null){
+            //  Navigator.pushReplacementNamed(context, '/home_screen');
+            //        }
+                   
                  Navigator.of(context).push(MaterialPageRoute(builder: (context)=>VerifyScreen(phone: phoneController.text,)));
                }, text: 'التالي', textcolor: Colors.white,color: Color(0xff1379A2)
                )
